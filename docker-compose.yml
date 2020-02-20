@@ -1,0 +1,33 @@
+
+version: "3"
+services:
+  mysql:
+    image: mysql:5
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_aula
+      MYSQL_USER: klaes
+      MYSQL_PASSWORD: klaes
+      TZ: America/Sao_Paulo
+    ports:
+     - 3306:3306
+    networks:
+      default:
+        ipv4_address: 172.18.0.104   
+  app:
+    restart: on-failure
+    build: .
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    command: node index.js
+    depends_on:
+      - mysql 
+networks:
+  default:
+    external:
+      # docker network create --gateway 172.18.0.1 --subnet 172.18.0.0/24 webproxy
+      name: ${NETWORK:-webproxy}
